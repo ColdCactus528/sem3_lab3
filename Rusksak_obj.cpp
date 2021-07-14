@@ -211,6 +211,7 @@ public:
         weight = R.GetWeight();
         cost = R.GetCost();
         matrix = R.GetMatrix();
+        object_array = R.GetObjectsArray();
     }
 
     void Set(std::vector<std::vector<int>> mat) {
@@ -225,6 +226,7 @@ public:
             size -= object.GetSize();
             weight += object.GetWeight();
             cost += object.GetPrice();
+            object_array.push_back(object);
 
             for (int i = 0; i < matrix.size(); i++) {
                 for (int j = 0; j < matrix[i].size(); j++) {
@@ -262,7 +264,11 @@ public:
 
     std::vector<std::vector<int>> GetMatrix() const {
         return matrix;
-    }    
+    }
+
+    std::vector<R_object> GetObjectsArray() const {
+        return object_array;
+    }   
 
 private:
     int size;
@@ -270,6 +276,7 @@ private:
     int cost;
     std::string output;
     std::vector<std::vector<int>> matrix;
+    std::vector<R_object> object_array;
 
     bool CheckCapasity(int volume) {
         if (size - volume < 0)
@@ -282,7 +289,6 @@ private:
 std::pair<int, int> FindFarthestPair(R_object object) {
     std::pair<int, int> farthest_pair = {0,0};
     // цикл который ищет int farthest_right & farthest_down
-    // std::cout << "Size = " << object.GetMatrix().size() << "\n";
     for (int i = 0; i < object.GetMatrix().size(); i++) {
         for (int j = 0; j < object.GetMatrix()[i].size(); j++) {
             if (object.GetMatrix()[i][j] == 1 && farthest_pair.second < j)
@@ -292,7 +298,6 @@ std::pair<int, int> FindFarthestPair(R_object object) {
                     farthest_pair.first = i; 
         }
     }
-    // std::cout << "Farthest_pair = " << farthest_pair.first << " : " << farthest_pair.second << "\n";
     return farthest_pair;
 }
 
@@ -303,72 +308,17 @@ void MakeSequence_of_one_object(std::vector<R_object>& vec, R_object object_0) {
 
     farthest_pair = FindFarthestPair(object);
     while (farthest_pair.second < object.GetMatrix().size()-1) {
-        // std::cout << "Farthest_pair = " << farthest_pair.first << " : " << farthest_pair.second << "\n";
         object.MoveHorizontalRight(1);
         vec.push_back(object);
         farthest_pair = FindFarthestPair(object);
 
-        // std::cout << "Farthest_pair after= " << farthest_pair.first << " : " << farthest_pair.second << "\n";
         if (farthest_pair.first < object.GetMatrix().size()-1 && farthest_pair.second == object.GetMatrix().size()-1) {
             object.MoveToLeftCorner();
             object.MoveVerticalDown(count_down);
             count_down += 1;
             vec.push_back(object);
             farthest_pair = FindFarthestPair(object);
-            // std::cout << "Farthest_pair after after = " << farthest_pair.first << " : " << farthest_pair.second << "\n";
         }
     }
     
 }
-
-// int main() {
-//     int size_matrix = 4;
-//     srand(time(NULL));
-//     int size = 1 + rand()% size_matrix;
-//     Rucksack R;
-//     R_object object;
-//     std::vector<R_object> objects_array;
-
-//     std::vector<std::vector<int> > matrix(4, std::vector<int> (4));     
-    
-//     // задание матрицы
-//     int z = 0;
-//     for (int i = 0; i < size_matrix; i++) {
-//         for (int j = 0; j < size_matrix; j++) 
-//             matrix[i][j] = z;  
-//     }
-//     matrix[1][1] = 1;
-//     // конец задания матрицы
-    
-//     for (int i = 0; i < size_matrix; i++) {
-//         for (int j = 0; j < size_matrix; j++) 
-//             std::cout << matrix[i][j] << " ";   
-//         std::cout << "\n"; 
-//     }
-//     std::cout << "\n";
-
-//     object.SetParametres(size,  3, 5, matrix);
-//     std::cout << "\n"; 
-
-//     for (int i = 0; i < size_matrix; i++) {
-//         for (int j = 0; j < size_matrix; j++) 
-//             std::cout << object.GetMatrix()[i][j] << " ";   
-//         std::cout << "\n"; 
-//     }
-//     std::cout << "\n";
-//     objects_array.push_back(object);
-
-//     std::cout << "Present\n";
-
-//     MakeSequence_of_one_object(objects_array, object);
-
-//     for (int k = 0; k < objects_array.size(); k++) {
-//         for (int i = 0; i < size_matrix; i++) {
-//             for (int j = 0; j < size_matrix; j++) 
-//                 std::cout << objects_array[k].GetMatrix()[i][j] << " ";   
-//             std::cout << "\n"; 
-//         }
-//         std::cout << "\n";
-//     }
-//     return 0;
-// }
